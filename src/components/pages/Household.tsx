@@ -3,6 +3,7 @@ import { ChangeEvent, FC, memo, useState } from "react"
 import { PrimaryButton } from "../atom/PrimaryButton"
 import { DataTable } from "../organisms/DataTables";
 import { Header } from "../organisms/Header";
+import {mnyYen} from "../atom/Mny";
 
 type Data = {
   id: number,
@@ -33,7 +34,12 @@ export const Household: FC = memo(() => {
   const [mny, setMny] = useState<number>(0);
   const [data, setData] = useState<Array<Data>>(sample);
   const [checkId, setCheckId] = useState<Array<number>>([]);
-  
+  const [sumMny, setSumMny] = useState<number>(20000);
+
+  const [updDisable, setUpdDisable] = useState<boolean>(true);
+
+  const month: number = new Date().getMonth();
+
   const onChangeType = (e:ChangeEvent<HTMLSelectElement>) => {
     setType(e.target.value)};
   const onChangeItem = (e:ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +66,8 @@ export const Household: FC = memo(() => {
     }]);
     setItem('');
     setMny(0);
+    setSumMny(sumMny + mny);
+    setUpdDisable(false);
   };
 
   const onChangeCheck = (e: ChangeEvent<HTMLInputElement>) => {
@@ -85,6 +93,13 @@ export const Household: FC = memo(() => {
     });
     setData(delAftrData);
     setCheckId(delAftrCheckId);
+
+    let sumMnyCal = 0;
+    delAftrData.forEach((d) => {
+      sumMnyCal += d.mny
+    });
+    setSumMny(sumMnyCal);
+    setUpdDisable(false);
   }
 
   return (
@@ -95,9 +110,17 @@ export const Household: FC = memo(() => {
         maxW="55rem"
         mx="auto"
         mt="3rem"
+        mb="3rem"
         borderColor="teal.900"
         backgroundColor="gray.100"
         >
+        <Box
+          as='h1'
+          bg='gray.300'
+          fontSize="3rem"
+          mb="2rem">
+          {month + 1}月
+        </Box>
         <Flex
           p="8px"
           align="center"
@@ -169,26 +192,36 @@ export const Household: FC = memo(() => {
             mb="2rem">
               <Spacer />
               <Stat
+                maxW="8rem"
+                mr="8rem">
+                <StatLabel
+                 color="red.700">一人当たり金額</StatLabel>
+                <StatNumber
+                 color="red.800">￥{mnyYen(sumMny / 2)}</StatNumber>
+              </Stat>
+              <Stat
                 maxW="8rem">
                 <StatLabel
-                 color="red.500">合計金額</StatLabel>
+                 color="red.900">合計金額</StatLabel>
                 <StatNumber
-                 color="red.800">100000</StatNumber>
+                 color="red.800">￥{mnyYen(sumMny)}</StatNumber>
               </Stat>
           </Flex>
-          <DataTable 
-            data={data} 
-            onChangeCheck={onChangeCheck}/>
-          <Flex
-            mx="1rem"
-            mt="1rem"
-            mb="1rem">
+          <HStack
+            mx="auto"
+            ml={{ base: "3", md: "10" }}
+            mb="2rem">
             <PrimaryButton
               isDisabled={false}
               onClick={alert} >
               Excel出力
             </PrimaryButton>
-          </Flex>
+            <PrimaryButton
+              isDisabled={updDisable}
+              onClick={alert} >
+              更新
+            </PrimaryButton>
+          </HStack>
         </Box>
       </Box>
     </>
