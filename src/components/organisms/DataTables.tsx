@@ -1,5 +1,6 @@
 import { Checkbox, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import { ChangeEvent, FC, memo } from "react";
+import { mnyYen } from "../atom/Mny";
 
 type Data = {
   id: number,
@@ -51,7 +52,7 @@ export const DataTable :FC<Props> = memo((props) => {
               <Td>{d.id}</Td>
               <Td>{d.type}</Td>
               <Td>{d.item}</Td>
-              <Td isNumeric>{d.mny}</Td>
+              <Td isNumeric>{mnyYen(d.mny)}</Td>
             </Tr>
           ))}
         </Tbody>
