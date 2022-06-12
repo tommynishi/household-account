@@ -18,7 +18,6 @@ export const useUpdate = () => {
       data.forEach((d: Data) => {
         updateDatas(tgtYm, d);
       })
-      
     }
     gettingData.forEach((gd) => {
       let prcss = false;
